@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block body %}
+
+  {% if session.get('logged_in') %}
+  <div class="new-link"><a href= "{{ url_for('new_post') }}">Submit a link</a></div>
+  {% endif %}
+
+		<span class="score">{{p.score}}</span>
+		<a class="link-title" href="{{p.link}}">{{p.title}}</a> 
+		posted by <a href="{{ url_for('show_user', username=p.author['username']) }}">{{p.author['username']}}</a>
+		<a href="{{ url_for('view_post', post_id= p._id)}}" class="comment-link">comments</a>
+
+		{% if session.get('logged_in') %}
+		<form action="{{ url_for('upvote', post_id=p._id)}}" method=post name="submit_score">
+			<input type=submit value=upvote 
+			{% if session.account.scored.get(p._id|int) == -1 %} disabled {% endif %}>
+		</form>
+		<form action="{{ url_for('downvote', post_id=p._id)}}" method=post name="submit_score">
+			<input type=submit value=downvote>
+		</form>
+		{% endif %}
+		<br>
+
+		<dt><h2><u>Comments</u></h2><br>
+		{% for comment in p.comments %}
+		{{comment.score}} - {{comment.text}}
+		<br>
+		<span class="comment-details">
+		posted by <a href="{{ url_for('show_user', username=comment.author.username) }}">{{comment.author.username}}</a>
+		</span>
+		<br><br>
+		{% endfor %}
+
+	{% if session.get('logged_in') %}
+	<form class="comment-area" action="{{url_for('comment', post_id=p._id)}}" method=post>
+		<textarea name=comment rows=4 cols=50 class="comment-textarea"></textarea>
+		<div><input type=submit value=Post></div>
+	</form>
+	{% endif %}
+
+{% endblock %}

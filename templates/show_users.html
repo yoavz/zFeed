@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+	<h2> Karma Hiscores </h2>
+	{% for a in accts %}
+	<dl>
+	<dt><strong>{{a.username}}</strong>
+		<dd><strong>Link Karma: {{a.link_karma}}</strong>
+		<dd>Comment Karma: {{a.comment_karma}}
+		<dd>Created: {{a.created.isoformat(' ')}}
+		<dd>Voting History: {{a.scored}}
+	</dl>
+	{% endfor %}
+{% endblock %}

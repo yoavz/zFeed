@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<title>zFeed</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+  <script type="text/javascript"> 
+        function submitform() {   document.submit_score.submit(); } 
+   </script> 
+</head>
+<body>
+<div class=page>
+  <a href="{{url_for('home')}}"><h1>zFeed</h1></a>
+  <h2><i>frontpage of the internet</i></h2>
+
+  <div class=metanav>
+    {% if session.get('logged_in') %}
+    Logged in as {{session['account'].username}}
+    <a href= "{{ url_for('logout') }}">Logout</a>
+    <br>
+    <i>Link Karma:</i> <strong>{{session['account'].link_karma}}</strong>,
+    <i>Comment Karma:</i> <strong>{{session['account'].comment_karma}}</strong>
+    {% else %}
+    <a href= "{{ url_for('login') }}">Login</a>
+    <a href= "{{ url_for('register') }}">Register</a>
+    {% endif %}
+  </div>
+
+  {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+  {% endfor %}
+
+  {% block body %}{% endblock %}
+</div>
+</body>
+</html>
