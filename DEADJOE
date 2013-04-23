@@ -1,7 +1,0 @@
-To run this on localhost, you must have mongodb running concurrently on the default port.
-Requires flask, pymongo-flask
-
-on linux:
-
-(one terminal) mongod
-(second terminal) python zfeed.py
