@@ -10,9 +10,11 @@ import utils
 import models
 import config as config
 
+
 app = Flask(__name__)
 app.config.from_object(config)
 mongo = PyMongo(app)
+
 
 @app.route('/')
 def home():
@@ -68,10 +70,11 @@ def upvote(post_id):
 		flash('You may not upvote twice')
 
 	elif already_scored(post_id) == -1:
-		update_post_score(post_id, 1, 0)
-
+		#upvote twice to remove the initial downvote
+		update_post_score(post_id, 1)
+		update_post_score(post_id, 1)
 	else:
-		update_post_score(post_id, 1, 1)
+		update_post_score(post_id, 1)
 
 	return redirect(url_for('home'))
 
@@ -81,14 +84,16 @@ def downvote(post_id):
 		flash('You may not downvote twice')
 
 	elif already_scored(post_id) == 1:
-		update_post_score(post_id, -1, 0)
+		#downvote twice to remove the initial upvote
+		update_post_score(post_id, -1)
+		update_post_score(post_id, -1)
 
 	else:
-		update_post_score(post_id, -1, -1)
+		update_post_score(post_id, -1)
 
 	return redirect(url_for('home'))
 
-def update_post_score(post_id, amount, score_level):
+def update_post_score(post_id, amount):
 	update_session_account()
 	#change post score
 	mongo.db.posts.update({'_id': ObjectId(post_id)}, {"$inc": {"score": amount}})
@@ -96,7 +101,7 @@ def update_post_score(post_id, amount, score_level):
 	scorer = session['account']['_id']
 	#change user info
 	mongo.db.accounts.update({'username': author['username']}, {'$inc': {"link_karma": amount}})
-	mongo.db.accounts.update({'_id': scorer}, {'$set': {'scored.%s' % post_id: score_level}})
+	mongo.db.accounts.update({'_id': scorer}, {'$set': {'scored.%s' % post_id: amount}})
 	return
 
 def get_post_author(post_id):
@@ -126,6 +131,7 @@ def register():
 
 	else:	
 		add_user(username, password)
+		#flash("user registered successfully")
 		login_session(username)
 		return redirect(url_for('home'))
 
@@ -211,7 +217,3 @@ def comment(post_id):
 		mongo.db.posts.update({'_id': ObjectId(post_id)}, {'$push': {'comments': comment}}) 
 	return redirect(url_for('view_post', post_id=post_id))
 
-################################################
-
-if __name__ == '__main__':
-	app.run()

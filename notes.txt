@@ -1,0 +1,14 @@
+remove all notes
+add a config file
+	add port numbers and stuff
+split up the functions
+
+figure out ec2 NOT BEANSTALK
+	micro
+
+===============================
+change all camel case to underscore
+divide up imports:
+	1) global python
+	2) flask, bson
+	3) local imports
