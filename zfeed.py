@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Blueprint
 from flask.ext.pymongo import PyMongo
 from bson.objectid import ObjectId
 from bson.son import SON
@@ -31,6 +31,9 @@ def flush():
 	mongo.db.accounts.remove()
 	return redirect(url_for('home'))
 
+def update_session_account():
+	return mongo.db.accounts.find_one({'_id': session['account']['_id']})
+	
 ## POST ######
 
 @app.route('/add', methods=['POST'])
@@ -171,8 +174,6 @@ def login_session(username):
 	#flash('Logged in as %s' % username)
 	return redirect(url_for('home'))
 
-## USERS ######################################
-
 def add_user(username, password):
 	new_user = models.Account(username, generate_password_hash(password))
 	return mongo.db.accounts.insert(new_user)
@@ -182,6 +183,8 @@ def username_taken(username):
 		if username == acct['username']:
 			return True
 	return False
+	
+## USERS ######################################
 
 @app.route('/users', methods= ['GET'])
 def show_users():
@@ -193,12 +196,6 @@ def show_users():
 def show_user(username):
 	acct = mongo.db.accounts.find({'username': username})
 	return render_template('show_users.html', accts = acct)
-
-def update_session_account():
-	return mongo.db.accounts.find_one({'_id': session['account']['_id']})
-
-
-
 
 # COMMENTS ####################################
 
