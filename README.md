@@ -5,7 +5,7 @@ Requires flask, flask-pymongo, and mongodb installed
 
 to run:
 
->service mongodb start
+<code>service mongodb start</code>
 
->python zfeed.py
+<code>python zfeed.py</code>
 
